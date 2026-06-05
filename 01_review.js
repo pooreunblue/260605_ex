@@ -14,3 +14,5 @@ app.listen(PORT, () => {
 });
 
 // npx nodemon 01_review.js
+// 현재 터미널에 01_review.js가 있어야함 & 현재 터미널에 package.json이 있어야함
+// npm run 01

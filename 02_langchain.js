@@ -9,6 +9,8 @@ dotenv.config();
 // 의존성
 const express = require("express");
 const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
+const { ChatGroq } = require("@langchain/groq");
+const { ChatOpenAI } = require("@langchain/openai");
 const { PromptTemplate } = require("@langchain/core/prompts");
 const { HumanMessage } = require("@langchain/core/messages");
 
@@ -31,9 +33,14 @@ app.post("/chat", async (req, res) => {
     case "google-genai":
       // npm i @langchain/google-genai
       // https://www.npmjs.com/package/@langchain/google-genai
-      llm = await useGoogleGenAI(model, ask);
+      llm = await useGoogleGenAI(model);
       break;
-
+    case "groq":
+      llm = await useGroq(model);
+      break;
+    case "nim":
+      llm = await useNim(model);
+      break;
     default:
       throw new Error("지원하지 않는 Provider");
   }
@@ -66,9 +73,35 @@ app.post("/chat", async (req, res) => {
 });
 
 // 커스텀 함수
-async function useGoogleGenAI(model, ask) {
+async function useGoogleGenAI(model) {
   return new ChatGoogleGenerativeAI({
     apiKey: process.env.GEMINI_API_KEY,
+    model,
+    temperature: 0.7,
+    maxOutputTokens: 512,
+  });
+}
+
+async function useGroq(model) {
+  return new ChatGroq ({
+    apiKey: process.env.GROQ_API_KEY,
+    model,
+    temperature: 0.7,
+    maxOutputTokens: 512,
+  })
+}
+
+async function useNim(model) {
+  // npm i @langchain/openai
+  // https://www.npmjs.com/package/@langchain/openai
+  // https://build.nvidia.com/models
+  // [Model]
+  // deepseek-ai/deepseek-v4-flash
+  return new ChatOpenAI({
+    apiKey: process.env.NIM_API_KEY,
+    configuration: {
+      baseURL: "https://integrate.api.nvidia.com/v1"
+    },
     model,
     temperature: 0.7,
     maxOutputTokens: 512,

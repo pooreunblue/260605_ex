@@ -4,6 +4,7 @@ dotenv.config();
 
 // 의존성
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 // Provider
 const { ChatGoogleGenerativeAI } = require("@langchain/google-genai");
@@ -27,6 +28,7 @@ app.use(cors()); // whitelist -> 어제 실습.
 app.use(express.json());
 // npm i cors
 // https://www.npmjs.com/package/cors
+app.use(express.static(path.join(__dirname, "docs")));
 
 // 엔드포인트
 app.post("/chat", async (req, res) => {
